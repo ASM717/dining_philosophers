@@ -1,17 +1,26 @@
 NAME		=	philo
+
 INCLUDE		=	philo.h
+
 SRC			=	main.c \
 				ft_utils.c ft_philo_utils.c
 
 OBJ_NAME	= $(SRC:.c=.o)
-CC			= gcc -g -Wall -Wextra -Werror
-RM	= rm -f
-$(NAME):	$(OBJ_NAME) philo.h
-			$(CC) -o $(NAME) $(OBJ_NAME)
+
+GCCFLAGS	= gcc -g -Wall -Wextra -Werror
+
+.c.o:
+			$(GCCFLAGS) -c $< -o $(<:.c=.o)
+
+$(NAME):	$(OBJ_NAME) $(INCLUDE)
+			$(GCCFLAGS) -o $(NAME) $(OBJ_NAME)
 
 all:		$(NAME)
+
 clean:
-			$(RM) $(OBJ_NAME)
+			rm -f $(OBJ_NAME)
+
 fclean:		clean
-			$(RM) ${NAME}
+			rm -f ${NAME}
+
 re:			fclean all

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amuriel <amuriel@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/08/07 12:30:20 by amuriel           #+#    #+#             */
+/*   Updated: 2021/08/07 12:39:12 by amuriel          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 unsigned long	grinvich(void)
@@ -10,6 +22,15 @@ unsigned long	grinvich(void)
 	return (ms);
 }
 
+void	ft_usleep(int ms)
+{
+	unsigned long	time;
+
+	time = grinvich() + ms;
+	while ((grinvich() < time))
+		usleep(10);
+}
+
 void	ft_print_param(t_philo *ph, int argc)
 {
 	printf("NUM = %d\n", ph->num_of_philos);
@@ -20,7 +41,7 @@ void	ft_print_param(t_philo *ph, int argc)
 		printf("N_E = %d\n", ph->num_ph_must_eat);
 }
 
-void ft_init_zero(t_philo *ph)
+void	ft_init_zero(t_philo *ph)
 {
 	ph->num_of_philos = 0;
 	ph->time_to_eat = 0;
@@ -34,7 +55,7 @@ void ft_init_zero(t_philo *ph)
 
 int	ft_mutex_init(t_philo *philo)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	philo->forks = malloc(sizeof(pthread_mutex_t) * philo->num_of_philos);
@@ -49,11 +70,11 @@ int	ft_mutex_init(t_philo *philo)
 
 void	*ft_philo_life(void *kinit)
 {
-	t_init *init;
+	t_init	*init;
 
 	init = (t_init *)kinit;
 	if (init->index % 2)
-		usleep(10000); //уточнить
+		ft_usleep(10); //уточнить
 	while (1)
 	{
 		pthread_mutex_lock(&init->philo->forks[init->fork_l]);
@@ -65,11 +86,11 @@ void	*ft_philo_life(void *kinit)
 		init->cnt_eat++;
 		//eating
 		printf("%lu\t%d\tis eating\n", grinvich() - init->philo->launch_time, init->index);
-		usleep(init->philo->time_to_eat);
+		ft_usleep(init->philo->time_to_eat);
 		pthread_mutex_unlock(&init->philo->forks[init->fork_l]);
 		pthread_mutex_unlock(&init->philo->forks[init->fork_r]);
 		printf("%lu\t%d\tis sleeping\n", grinvich() - init->philo->launch_time, init->index);
-		usleep(init->philo->time_to_sleep);
+		ft_usleep(init->philo->time_to_sleep);
 		printf("%lu\t%d\tis thinking\n", grinvich() - init->philo->launch_time, init->index);
 	}
 	return (NULL);
@@ -101,13 +122,13 @@ int	main(int argc, char **argv)
 		{
 			init[i].timer = grinvich();
 			init[i].index = i;
-			// init[i].id = i + 1;
 			init[i].cnt_eat = 0;
 			init[i].fork_l = i;
 			init[i].fork_r = (i + 1) % philo.num_of_philos;
 			init[i].philo = &philo;
 			init_ph = (void *)&init[i];
-			pthread_create(&init[i].threads, NULL, ft_philo_life, init_ph);
+			if (pthread_create(&init[i].threads, NULL, ft_philo_life, init_ph))
+				return (-1);
 			i++;
 		}
 		i = 0;

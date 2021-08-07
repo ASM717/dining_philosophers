@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amuriel <amuriel@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/08/07 12:30:29 by amuriel           #+#    #+#             */
+/*   Updated: 2021/08/07 12:58:08 by amuriel          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PHILO_H
 # define PHILO_H
 
@@ -7,28 +19,24 @@
 # include <stdlib.h>
 # include <sys/time.h>
 
-
-
-typedef struct		s_philo
+typedef struct s_philo
 {
-	int				num_of_philos; //это число философов, а также число вилок
+	int				num_of_philos;
 	unsigned long	time_to_die;
 	unsigned long	time_to_eat;
-	unsigned long	time_to_sleep; //мили сек
+	unsigned long	time_to_sleep;
 	int				num_ph_must_eat;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print;
 	unsigned long	launch_time;
 	int				cnt;
 	int				cnt_death;
-
 }t_philo;
 
-typedef struct		s_init
+typedef struct s_init
 {
 	t_philo			*philo;
 	int				index;
-	//int				id;
 	int				cnt_eat;
 	unsigned long	timer;
 	int				fork_l;

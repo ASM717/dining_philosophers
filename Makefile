@@ -7,7 +7,7 @@ SRC			=	main.c \
 
 OBJ_NAME	= $(SRC:.c=.o)
 
-GCCFLAGS	= gcc -g -Wall -Wextra -Werror
+GCCFLAGS	= gcc -g -Wall -Wextra -Werror -lpthread -pthread
 
 .c.o:
 			$(GCCFLAGS) -c $< -o $(<:.c=.o)

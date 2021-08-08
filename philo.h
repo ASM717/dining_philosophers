@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amuriel <amuriel@student.42.fr>            +#+  +:+       +#+        */
+/*   By: amuriel <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/07 12:30:29 by amuriel           #+#    #+#             */
-/*   Updated: 2021/08/07 12:58:08 by amuriel          ###   ########.fr       */
+/*   Updated: 2021/08/08 08:39:10 by amuriel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ typedef struct s_philo
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print;
 	unsigned long	launch_time;
-	int				cnt;
+	//int				cnt;
 	int				cnt_death;
 }t_philo;
 

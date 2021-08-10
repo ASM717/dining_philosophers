@@ -6,12 +6,19 @@
 /*   By: amuriel <amuriel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/07 12:30:29 by amuriel           #+#    #+#             */
-/*   Updated: 2021/08/09 14:42:20 by amuriel          ###   ########.fr       */
+/*   Updated: 2021/08/09 18:43:18 by amuriel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 # define PHILO_H
+
+# define RED		"\x1b[31m"
+# define GREEN		"\x1b[32m"
+# define YELLOW		"\x1b[33m"
+# define BLUE		"\x1b[34m"
+# define PURPLE		"\x1b[35m"
+# define SKY		"\x1b[36m"
 
 # include <stdio.h>
 # include <unistd.h>
@@ -22,14 +29,14 @@
 typedef struct s_philo
 {
 	int				num_of_philos;
-	unsigned long	time_to_die;
-	unsigned long	time_to_eat;
-	unsigned long	time_to_sleep;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
 	int				num_ph_must_eat;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print;
 	unsigned long	launch_time;
-	unsigned long	finish_eat_t;
+
 	struct timeval	finish_eat_t2;
 	//int				cnt;
 	int				cnt_death;

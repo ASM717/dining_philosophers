@@ -26,7 +26,7 @@ int	ft_check_param(t_philo *philo, int argc, char **argv)
 		philo->time_to_sleep = ft_atoi(argv[4]);
 		if ((philo->num_ph_must_eat = ft_atoi(argv[5])) < 1)
 		{
-			printf("Error: write correct argument's!\n");
+			printf(RED"Error: write correct argument's!\n");
 			exit(0);
 		}
 	}

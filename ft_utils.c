@@ -12,6 +12,25 @@
 
 #include "philo.h"
 
+unsigned long	ft_grinvich(void)
+{
+	struct timeval	time;
+	unsigned long	ms;
+
+	gettimeofday(&time, NULL);
+	ms = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+	return (ms);
+}
+
+void	ft_myusleep(int ms)
+{
+	unsigned long	time;
+
+	time = ft_grinvich() + ms;
+	while ((ft_grinvich() < time))
+		usleep(500);
+}
+
 static int	ft_isspace(int c)
 {
 	while (c == '\t' || c == '\n' || c == '\v' || c == '\f'

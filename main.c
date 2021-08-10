@@ -12,35 +12,6 @@
 
 #include "philo.h"
 
-unsigned long	grinvich(void)
-{
-	struct timeval	time;
-	unsigned long	ms;
-
-	gettimeofday(&time, NULL);
-	ms = (time.tv_sec * 1000) + (time.tv_usec / 1000);
-	return (ms);
-}
-
-// long	get_time(struct timeval	time)
-// {
-// 	struct timeval	now;
-// 	long	ms;
-
-// 	gettimeofday(&now, NULL);
-// 	ms = (now.tv_sec - time.tv_sec) * 1000 + (now.tv_usec - time.tv_usec) / 1000;
-// 	return (ms);
-// }
-
-void	ft_usleep(int ms)
-{
-	unsigned long	time;
-
-	time = grinvich() + ms;
-	while ((grinvich() < time))
-		usleep(5000);
-}
-
 // void	ft_print_param(t_philo *ph, int argc)
 // {
 // 	printf("NUM = %d\n", ph->num_of_philos);
@@ -60,7 +31,7 @@ void	ft_init_zero(t_philo *ph)
 	ph->num_ph_must_eat = 0;
 	ph->launch_time = 0;
 	//ph->cnt = 0;
-	ph->cnt_death = -1;
+	ph->cnt_death = -1;//?
 }
 
 int	ft_mutex_init(t_philo *philo)
@@ -78,72 +49,71 @@ int	ft_mutex_init(t_philo *philo)
 	return (0);
 }
 
-// int	ft_maximum_eat(t_init *init)
-// {
-// 	int	i;
-
-// 	i = -1;
-// 	while (++i < init->philo->num_ph_must_eat)
-// 	{
-// 		if (init[i].cnt_eat < init->philo->num_ph_must_eat)
-// 			return (0);
-// 	}
-// 	//finish = 1;
-// 	return (1);
-// }
-
-void	*ft_philo_life(void *kinit)
+int		ft_philo_create(t_init *init, t_philo philo)
 {
-	t_init	*init;
-	unsigned long	diff_time;
+	int i;
+	void	*init_ph;
 
-	init = (t_init *)kinit;
-	if (init->index % 2)
-		ft_usleep(init->philo->time_to_eat / 2);
-	while (init->cnt_eat != init->philo->cnt_death)
+	i = 0;
+	philo.launch_time = ft_grinvich();
+	while (i < philo.num_of_philos)
 	{
-		pthread_mutex_lock(&init->philo->forks[init->fork_l]);
-		diff_time = grinvich() - init->philo->launch_time;
-		pthread_mutex_lock(&init->philo->print);
-		printf(GREEN"%lu\t\t%d\t\thas taken a fork\n", diff_time, init->index);
-		pthread_mutex_unlock(&init->philo->print);
-
-		pthread_mutex_lock(&init->philo->forks[init->fork_r]);
-		diff_time = grinvich() - init->philo->launch_time;
-		pthread_mutex_lock(&init->philo->print);
-		printf(GREEN"%lu\t\t%d\t\thas taken a fork\n", diff_time, init->index);
-		pthread_mutex_unlock(&init->philo->print);
-
-		init->timer = grinvich();
-		init->cnt_eat++;
-		//eating
-		diff_time = grinvich() - init->philo->launch_time;
-		pthread_mutex_lock(&init->philo->print);
-		printf(PURPLE"%lu\t\t%d\t\tis eating\n", diff_time, init->index);
-		pthread_mutex_unlock(&init->philo->print);
-		ft_usleep(init->philo->time_to_eat);
-		pthread_mutex_unlock(&init->philo->forks[init->fork_l]);
-		pthread_mutex_unlock(&init->philo->forks[init->fork_r]);
-		//sleep
-		diff_time = grinvich() - init->philo->launch_time;
-		pthread_mutex_lock(&init->philo->print);
-		printf(SKY"%lu\t\t%d\t\tis sleeping\n", diff_time, init->index);
-		pthread_mutex_unlock(&init->philo->print);
-		ft_usleep(init->philo->time_to_sleep);
-		diff_time = grinvich() - init->philo->launch_time;
-		pthread_mutex_lock(&init->philo->print);
-		printf(BLUE"%lu\t\t%d\t\tis thinking\n", diff_time, init->index);
-		pthread_mutex_unlock(&init->philo->print);
+		init[i].timer = ft_grinvich();
+		init[i].index = i + 1;
+		init[i].cnt_eat = 0;
+		init[i].fork_l = i;
+		init[i].fork_r = (i + 1) % philo.num_of_philos;
+		init[i].philo = &philo;
+		//init[i].dead_flag = 0; //уточнить
+		init_ph = (void *)&init[i];
+		if (pthread_create(&init[i].threads, NULL, ft_philo_life, init_ph))
+			return (-1);
+		i++;
 	}
-	return (NULL);
+	return (0);
 }
 
-int	main(int argc, char **argv)
+int 	ft_stewart(t_init *init)
+{
+	int				i;
+	unsigned long	diff_time1;
+	unsigned long	diff_time2;
+
+	while (1)
+	{
+		i = 0;
+		while (i < init->philo->num_of_philos)
+		{
+			diff_time1 = ft_grinvich() - init[i].timer;
+			if ((int)diff_time1 >= init->philo->time_to_die)
+			{
+				pthread_mutex_lock(&init->philo->print);
+				diff_time2 = ft_grinvich() - init->philo->launch_time;
+				pthread_mutex_destroy(&(init->philo->forks[i++]));
+				pthread_detach(init[i].threads);
+				printf(RED"%lu\t\t%d\t\tis died\n", diff_time2, init->index);
+				return (0);
+			}
+			//не работает
+			if (init[i].philo->num_of_philos == init[i].philo->num_ph_must_eat)
+			{
+				pthread_mutex_lock(&init->philo->print);
+				pthread_mutex_destroy(&(init->philo->forks[i++]));
+				pthread_detach(init[i].threads);
+				printf(YEL"Everyone has eaten, everyone is happy!\n");
+				return (0);
+			}
+			i++;
+			// if (i == init->philo->num_of_philos)
+			// 	i = 0;
+		}
+	}
+}
+
+int		main(int argc, char **argv)
 {
 	t_philo	philo;
 	t_init	*init;
-	void	*init_ph;
-	int		i;
 
 	ft_init_zero(&philo);
 	if (argc == 5 || argc == 6)
@@ -155,51 +125,12 @@ int	main(int argc, char **argv)
 			return (0);
 		}
 		ft_mutex_init(&philo);
-		philo.launch_time = grinvich();
 		init = malloc (sizeof(t_init) * philo.num_of_philos);
 		if (!(init))
 			return (-1);
-		i = 0;
-		while (i < philo.num_of_philos)
-		{
-			init[i].timer = grinvich();
-			init[i].index = i + 1;
-			init[i].cnt_eat = 0;
-			init[i].fork_l = i;
-			init[i].fork_r = (i + 1) % philo.num_of_philos;
-			init[i].philo = &philo;
-			//init[i].dead_flag = 0; //уточнить
-			init_ph = (void *)&init[i];
-			if (pthread_create(&init[i].threads, NULL, ft_philo_life, init_ph))
-				return (-1);
-			i++;
-		}
-
-		while (1)
-		{
-			i = 0;
-			while (i < init->philo->num_of_philos)
-			{
-				unsigned long diff_time1 = grinvich() - init[i].timer;
-				if ((int)diff_time1 >= init->philo->time_to_die)
-				{
-					pthread_mutex_lock(&init->philo->print);
-					unsigned long diff_time2 = grinvich() - init->philo->launch_time;
-					pthread_detach(init[i].threads);
-					pthread_mutex_destroy(&(init->philo->forks[i++]));
-					printf(RED"%lu\t\t%d\t\tis died\n", diff_time2, init->index);
-					return (0);
-				}
-				i++;
-				// if (i == init->philo->num_of_philos)
-				// 	i = 0;
-			}
-		}
-
-		// i = 0;
-		// while (i < philo.num_of_philos)
-		// 	pthread_mutex_destroy(&(init->philo->forks[i++]));
-		//ft_print_param(&philo, argc);
+		ft_philo_create(init, philo);
+		ft_stewart(init);
+		free(init->philo->forks);
 	}
 	else
 		printf(RED"Error: argument's!\n");

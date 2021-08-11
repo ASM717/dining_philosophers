@@ -79,9 +79,6 @@ int 	ft_stewart(t_init *init)
 	unsigned long	diff_time1;
 	unsigned long	diff_time2;
 
-
-
-
 	while (1)
 	{
 		i = 0;

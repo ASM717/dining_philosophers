@@ -12,16 +12,6 @@
 
 #include "philo.h"
 
-// void	ft_print_param(t_philo *ph, int argc)
-// {
-// 	printf("NUM = %d\n", ph->num_of_philos);
-// 	printf("DIE = %ld\n", ph->time_to_die);
-// 	printf("EAT = %ld\n", ph->time_to_eat);
-// 	printf("SLE = %ld\n", ph->time_to_sleep);
-// 	if (argc == 6)
-// 		printf("N_E = %d\n", ph->num_ph_must_eat);
-// }
-
 void	ft_init_zero(t_philo *ph)
 {
 	ph->num_of_philos = 0;
@@ -30,7 +20,6 @@ void	ft_init_zero(t_philo *ph)
 	ph->time_to_die = 0;
 	ph->num_ph_must_eat = 0;
 	ph->launch_time = 0;
-	//ph->cnt = 0;
 	ph->cnt_death = -1;//?
 }
 
@@ -64,7 +53,6 @@ int		ft_philo_create(t_init *init, t_philo philo)
 		init[i].fork_l = i;
 		init[i].fork_r = (i + 1) % philo.num_of_philos;
 		init[i].philo = &philo;
-		//init[i].dead_flag = 0; //уточнить
 		init_ph = (void *)&init[i];
 		if (pthread_create(&init[i].threads, NULL, ft_philo_life, init_ph))
 			return (-1);
@@ -78,34 +66,33 @@ int 	ft_stewart(t_init *init)
 	int				i;
 	unsigned long	diff_time1;
 	unsigned long	diff_time2;
-
 	while (1)
 	{
 		i = 0;
 		while (i < init->philo->num_of_philos)
 		{
+			if (init->cnt_eat == init[i].philo->num_ph_must_eat)
+			{
+				pthread_mutex_lock(&init->philo->print);
+				pthread_detach(init[i].threads);
+				printf(YEL"Everyone has eaten, everyone is happy!\n");
+				pthread_mutex_destroy(&(init->philo->forks[i++]));
+				return (0);
+			}
+			i++;
 			diff_time1 = ft_grinvich() - init[i].timer;
 			if ((int)diff_time1 >= init->philo->time_to_die)
 			{
 				pthread_mutex_lock(&init->philo->print);
 				diff_time2 = ft_grinvich() - init->philo->launch_time;
-				pthread_mutex_destroy(&(init->philo->forks[i++]));
 				pthread_detach(init[i].threads);
 				printf(RED"%lu\t\t%d\t\tis died\n", diff_time2, init->index);
-				return (0);
-			}
-			//не работает
-			if (init[i].philo->num_of_philos == init[i].philo->num_ph_must_eat)
-			{
-				pthread_mutex_lock(&init->philo->print);
 				pthread_mutex_destroy(&(init->philo->forks[i++]));
-				pthread_detach(init[i].threads);
-				printf(YEL"Everyone has eaten, everyone is happy!\n");
 				return (0);
 			}
 			i++;
-			// if (i == init->philo->num_of_philos)
-			// 	i = 0;
+//			if (i == init->philo->num_of_philos)
+//				i = 0;
 		}
 	}
 }

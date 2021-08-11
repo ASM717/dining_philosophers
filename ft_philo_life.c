@@ -54,11 +54,13 @@ void	*ft_philo_life(void *kinit)
 {
 	t_init			*init;
 	unsigned long	diff_time;
+	int				eating;
 
 	init = (t_init *)kinit;
+	eating = init->philo->time_to_eat / 2;
 	diff_time = 0;
 	if (init->index % 2)
-		ft_myusleep(init->philo->time_to_eat / 2);
+		ft_myusleep(eating);
 	while (init->cnt_eat != init->philo->cnt_death)
 	{
 		ft_mutex_forks(init, diff_time);

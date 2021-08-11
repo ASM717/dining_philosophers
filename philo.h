@@ -48,7 +48,6 @@ typedef struct s_init
 	int				fork_l;
 	int				fork_r;
 	pthread_t		threads;
-//	int				dead_flag;
 }t_init;
 
 int				ft_atoi(const char *str);

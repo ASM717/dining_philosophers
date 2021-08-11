@@ -29,6 +29,7 @@ int	ft_check_param(t_philo *philo, int argc, char **argv)
 		philo->time_to_die = ft_atoi(argv[2]);
 		philo->time_to_eat = ft_atoi(argv[3]);
 		philo->time_to_sleep = ft_atoi(argv[4]);
+		philo->num_ph_must_eat = -1;
 	}
 	if (argc == 6)
 	{

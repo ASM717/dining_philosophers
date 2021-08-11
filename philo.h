@@ -36,7 +36,7 @@ typedef struct s_philo
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print;
 	unsigned long	launch_time;
-	int				cnt_death;
+	int 			num_ph_eat;
 }t_philo;
 
 typedef struct s_init

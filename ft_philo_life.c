@@ -24,10 +24,18 @@ static void	ft_mutex_forks(t_init *init, unsigned long	diff_time)
 	pthread_mutex_lock(&init->philo->print);
 	printf(GREEN"%lu\t\t%d\t\thas taken a fork\n", diff_time, init->index);
 	pthread_mutex_unlock(&init->philo->print);
+	init->timer = ft_grinvich();
+	init->cnt_eat += 1;
 }
 
 static void	ft_mutex_brunch(t_init *init, unsigned long	diff_time)
 {
+	if (init->cnt_eat == init->philo->num_ph_must_eat)
+	{
+		pthread_mutex_lock(&init->philo->print);
+		init->philo->num_ph_eat++;
+		pthread_mutex_unlock(&init->philo->print);
+	}
 	diff_time = ft_grinvich() - init->philo->launch_time;
 	pthread_mutex_lock(&init->philo->print);
 	printf(PURPLE"%lu\t\t%d\t\tis eating\n", diff_time, init->index);
@@ -61,11 +69,9 @@ void	*ft_philo_life(void *kinit)
 	diff_time = 0;
 	if (init->index % 2)
 		ft_myusleep(eating);
-	while (init->cnt_eat != init->philo->cnt_death)
+	while (init->cnt_eat != -1)
 	{
 		ft_mutex_forks(init, diff_time);
-		init->timer = ft_grinvich();
-		init->cnt_eat++;
 		ft_mutex_brunch(init, diff_time);
 		ft_mutex_relax(init, diff_time);
 	}

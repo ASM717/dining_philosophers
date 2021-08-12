@@ -36,7 +36,7 @@ typedef struct s_philo
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print;
 	unsigned long	launch_time;
-	int 			num_ph_eat;
+	int				num_ph_eat;
 }t_philo;
 
 typedef struct s_init
@@ -56,5 +56,6 @@ int				ft_check_input_num(t_philo *philo);
 void			*ft_philo_life(void *kinit);
 unsigned long	ft_grinvich(void);
 void			ft_myusleep(int ms);
+int				ft_stewart(t_init *init);
 
 #endif

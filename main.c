@@ -38,9 +38,9 @@ int	ft_mutex_init(t_philo *philo)
 	return (0);
 }
 
-int		ft_philo_create(t_init *init, t_philo philo)
+int	ft_philo_create(t_init *init, t_philo philo)
 {
-	int i;
+	int		i;
 	void	*init_ph;
 
 	i = 0;
@@ -61,40 +61,7 @@ int		ft_philo_create(t_init *init, t_philo philo)
 	return (0);
 }
 
-int 	ft_stewart(t_init *init)
-{
-	int				i;
-	unsigned long	diff_time1;
-	unsigned long	diff_time2;
-
-	while (1)
-	{
-		i = 0;
-		while (i < init->philo->num_of_philos)
-		{
-			diff_time1 = ft_grinvich() - init[i].timer;
-			if (init->philo->num_ph_eat == init->philo->num_of_philos)
-			{
-				//pthread_mutex_destroy(&(init->philo->forks[i++]));
-				pthread_detach(init[i].threads);
-				printf(YEL"Everyone has eaten, everyone is happy!\n");
-				return (0);
-			}
-			if ((int)diff_time1 >= init->philo->time_to_die)
-			{
-				diff_time2 = ft_grinvich() - init->philo->launch_time;
-				pthread_mutex_lock(&init->philo->print);
-				pthread_mutex_destroy(&(init->philo->forks[i++]));
-				pthread_detach(init[i].threads);
-				printf(RED"%lu\t\t%d\t\tis died\n", diff_time2, init->index);
-				return (0);
-			}
-			i++;
-		}
-	}
-}
-
-int		main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
 	t_philo	philo;
 	t_init	*init;
@@ -114,8 +81,8 @@ int		main(int argc, char **argv)
 			return (-1);
 		ft_philo_create(init, philo);
 		ft_stewart(init);
-		//free(init->philo->forks);
-		//free(init);
+		free(init->philo->forks);
+		free(init);
 	}
 	else
 		printf(RED"Error: argument's!\n");

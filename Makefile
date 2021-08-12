@@ -3,7 +3,7 @@ NAME		=	philo
 INCLUDE		=	philo.h
 
 SRC			=	main.c \
-				ft_philo_life.c \
+				ft_philo_life.c ft_stewart.c\
 				ft_utils.c ft_philo_utils.c
 
 OBJ_NAME	= $(SRC:.c=.o)

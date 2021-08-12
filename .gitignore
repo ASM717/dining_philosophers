@@ -6,3 +6,4 @@
 .DS_Store
 /philo
 *.o
+/philo.dSYM/

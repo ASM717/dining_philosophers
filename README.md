@@ -1,1 +1,3 @@
-# dining_philosophers
+# dining_philosophers(mutex)
+
+launch only in macOS
